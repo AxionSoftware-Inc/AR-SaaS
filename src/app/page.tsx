@@ -1,65 +1,220 @@
-import Image from "next/image";
+import { ArCanvas } from "@/components/ar-canvas";
+import { QrCard } from "@/components/qr-card";
+import { tenants } from "@/lib/demo-data";
+import {
+  ArrowUpRight,
+  BadgeCheck,
+  BarChart3,
+  Box,
+  Layers3,
+  Plus,
+  QrCode,
+  ScanLine,
+  ShieldCheck,
+  Sparkles,
+  Upload,
+} from "lucide-react";
+import Link from "next/link";
+
+const activeTenant = tenants[0];
+const activeModel = activeTenant.models[0];
 
 export default function Home() {
+  const totalScans = tenants.flatMap((tenant) => tenant.models).reduce((sum, model) => sum + model.scans, 0);
+  const totalConversions = tenants
+    .flatMap((tenant) => tenant.models)
+    .reduce((sum, model) => sum + model.conversions, 0);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="min-h-screen bg-zinc-100 text-zinc-950">
+      <header className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-lg bg-zinc-950 text-white">
+              <Layers3 className="size-5" />
+            </div>
+            <div>
+              <p className="text-base font-semibold leading-5">AR View</p>
+              <p className="text-xs text-zinc-500">Commerce-ready 3D QR platform</p>
+            </div>
+          </div>
+          <nav className="hidden items-center gap-2 text-sm font-medium text-zinc-600 md:flex">
+            <Link className="rounded-md px-3 py-2 hover:bg-zinc-100" href="/panel">
+              Panel
+            </Link>
+            <a className="rounded-md px-3 py-2 hover:bg-zinc-100" href="#dashboard">
+              Dashboard
+            </a>
+            <a className="rounded-md px-3 py-2 hover:bg-zinc-100" href="#models">
+              Models
+            </a>
+            <a className="rounded-md px-3 py-2 hover:bg-zinc-100" href="#qr">
+              QR
+            </a>
+          </nav>
+          <Link
+            href={`/ar/${activeModel.id}`}
+            className="inline-flex h-10 items-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <ScanLine className="size-4" />
+            Preview scan
+          </Link>
         </div>
-      </main>
-    </div>
+      </header>
+
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_430px] lg:px-8">
+          <div className="flex flex-col justify-between gap-8">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800">
+                <BadgeCheck className="size-4" />
+                MVP: web dashboard + QR + browser 3D preview
+              </div>
+              <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-normal text-zinc-950 md:text-5xl">
+                Cafelar va mebel bizneslari uchun QR orqali ochiladigan AR katalog.
+              </h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
+                Biznes profil ochadi, 3D model yuklaydi, stol yoki showroom uchun QR oladi.
+                Mijoz QR ni skaner qilganda model telefon brauzerida ko&apos;rinadi.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["Active profiles", tenants.length.toString(), ShieldCheck],
+                ["Monthly scans", totalScans.toLocaleString("en-US"), BarChart3],
+                ["Lead actions", totalConversions.toLocaleString("en-US"), ArrowUpRight],
+              ].map(([label, value, Icon]) => (
+                <div key={label as string} className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                  <Icon className="size-5 text-zinc-500" />
+                  <p className="mt-3 text-2xl font-semibold">{value as string}</p>
+                  <p className="text-sm text-zinc-500">{label as string}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="h-[460px] min-h-[460px]">
+            <ArCanvas kind={activeModel.kind} color={activeModel.color} label={activeModel.name} />
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard" className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
+        <aside className="space-y-4">
+          <div className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+            <p className="text-sm font-semibold text-zinc-950">Workspace</p>
+            <div className="mt-4 space-y-2">
+              {tenants.map((tenant) => {
+                const Icon = tenant.icon;
+                return (
+                  <button
+                    key={tenant.slug}
+                    className={`flex w-full items-center gap-3 rounded-md border px-3 py-3 text-left ${
+                      tenant.slug === activeTenant.slug
+                        ? "border-zinc-950 bg-zinc-950 text-white"
+                        : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium">{tenant.name}</span>
+                      <span className="block truncate text-xs opacity-70">{tenant.segment}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+            <p className="text-sm font-semibold">Different angle</p>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">
+              Oddiy katalog emas: har QR stol, xona yoki display joyiga bog&apos;lanadi. Dashboard scan,
+              qiziqish va sotuvga yaqin harakatlarni ko&apos;rsatadi.
+            </p>
+          </div>
+        </aside>
+
+        <div className="space-y-6">
+          <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-sm font-semibold text-zinc-500">Business profile</p>
+                <h2 className="text-2xl font-semibold">{activeTenant.name}</h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                  {activeTenant.segment} / {activeTenant.location}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Link href="/panel" className="inline-flex h-10 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 text-sm font-semibold hover:bg-zinc-50">
+                  <Upload className="size-4" />
+                  Upload model
+                </Link>
+                <Link href="/panel" className="inline-flex h-10 items-center gap-2 rounded-md bg-zinc-950 px-3 text-sm font-semibold text-white hover:bg-zinc-800">
+                  <Plus className="size-4" />
+                  New QR
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          <section id="models" className="grid gap-6 xl:grid-cols-[1fr_320px]">
+            <div className="rounded-lg border border-zinc-200 bg-white shadow-sm">
+              <div className="flex items-center justify-between border-b border-zinc-200 p-5">
+                <div>
+                  <h2 className="text-lg font-semibold">3D model catalog</h2>
+                  <p className="text-sm text-zinc-500">Upload, approve, assign to QR points.</p>
+                </div>
+                <Box className="size-5 text-zinc-500" />
+              </div>
+              <div className="divide-y divide-zinc-200">
+                {activeTenant.models.map((model) => (
+                  <div key={model.id} className="grid gap-4 p-5 md:grid-cols-[1fr_130px_130px] md:items-center">
+                    <div className="flex items-center gap-4">
+                      <div className="size-12 rounded-md border border-zinc-200" style={{ backgroundColor: model.color }} />
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold">{model.name}</p>
+                        <p className="truncate text-sm text-zinc-500">{model.material}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{model.scans.toLocaleString("en-US")}</p>
+                      <p className="text-xs text-zinc-500">Scans</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{model.conversions.toLocaleString("en-US")}</p>
+                      <p className="text-xs text-zinc-500">Actions</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div id="qr" className="space-y-4">
+              <QrCard path={`/ar/${activeModel.id}`} label={`${activeTenant.qrLabel}: ${activeModel.name}`} />
+              <Link
+                href={`/ar/${activeModel.id}`}
+                className="flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white text-sm font-semibold hover:bg-zinc-50"
+              >
+                <QrCode className="size-4" />
+                Open customer view
+              </Link>
+            </div>
+          </section>
+
+          <section className="grid gap-4 md:grid-cols-3">
+            {[
+              ["Spatial QR zones", "Each QR can represent a table, room, display wall, or product shelf."],
+              ["Model QA pipeline", "Uploaded GLB/USDZ files can be checked before customers see them."],
+              ["Offer layer", "Businesses can attach menu, price, booking, or inquiry actions to the 3D view."],
+            ].map(([title, body]) => (
+              <div key={title} className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+                <Sparkles className="size-5 text-zinc-500" />
+                <h3 className="mt-4 font-semibold">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-zinc-600">{body}</p>
+              </div>
+            ))}
+          </section>
+        </div>
+      </section>
+    </main>
   );
 }
