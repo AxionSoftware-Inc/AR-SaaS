@@ -50,7 +50,9 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
         });
     }
 
-    sendScanEvent(modelId, qrCode).catch(() => undefined);
+    if (!initialModel) {
+      sendScanEvent(modelId, qrCode).catch(() => undefined);
+    }
 
     return () => {
       ignore = true;

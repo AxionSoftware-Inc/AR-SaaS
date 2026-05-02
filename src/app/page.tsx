@@ -1,5 +1,4 @@
 import { ArCanvas } from "@/components/ar-canvas";
-import { ModelViewer } from "@/components/model-viewer";
 import { QrCard } from "@/components/qr-card";
 import { tenants } from "@/lib/demo-data";
 import {
@@ -200,12 +199,27 @@ export default function Home() {
                     Backendsiz demo
                   </span>
                 </div>
-                <div className="mt-4 h-64 overflow-hidden rounded-md border border-zinc-200 bg-white">
-                  <ModelViewer
-                    src={activeModel.modelUrl}
-                    alt={activeModel.name}
-                    className="h-full w-full bg-white"
-                  />
+                <div className="mt-4 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 p-4">
+                  <div className="flex min-h-48 items-center justify-center rounded-md bg-white">
+                    <div className="relative h-32 w-36">
+                      <div
+                        className="absolute left-4 top-12 h-14 w-28 rounded-md border border-black/10 shadow-lg"
+                        style={{ backgroundColor: activeModel.color }}
+                      />
+                      <div
+                        className="absolute left-6 top-2 h-24 w-24 rounded-md border border-black/10 shadow-lg"
+                        style={{ backgroundColor: activeModel.color }}
+                      />
+                      <div className="absolute bottom-0 left-7 h-14 w-2 rounded bg-amber-900" />
+                      <div className="absolute bottom-0 left-28 h-14 w-2 rounded bg-amber-900" />
+                      <div className="absolute bottom-0 left-14 h-14 w-2 rounded bg-amber-900" />
+                      <div className="absolute bottom-0 left-24 h-14 w-2 rounded bg-amber-900" />
+                    </div>
+                  </div>
+                  <div className="mt-3 rounded-md bg-white p-3">
+                    <p className="text-sm font-semibold text-zinc-950">{activeModel.name}</p>
+                    <p className="mt-1 text-xs text-zinc-500">{activeModel.material}</p>
+                  </div>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-zinc-600">
                   Bu demo model serverdagi static GLB fayldan ochiladi. QR ni skaner qilsangiz
