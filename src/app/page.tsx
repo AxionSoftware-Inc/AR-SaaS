@@ -1,4 +1,5 @@
 import { ArCanvas } from "@/components/ar-canvas";
+import { ModelViewer } from "@/components/model-viewer";
 import { QrCard } from "@/components/qr-card";
 import { tenants } from "@/lib/demo-data";
 import {
@@ -156,7 +157,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section id="models" className="grid gap-6 xl:grid-cols-[1fr_320px]">
+          <section id="models" className="grid gap-6 xl:grid-cols-[1fr_390px]">
             <div className="rounded-lg border border-zinc-200 bg-white shadow-sm">
               <div className="flex items-center justify-between border-b border-zinc-200 p-5">
                 <div>
@@ -189,6 +190,28 @@ export default function Home() {
             </div>
 
             <div id="qr" className="space-y-4">
+              <div className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-zinc-950">QR ochadigan model</p>
+                    <p className="mt-1 text-sm text-zinc-500">{activeModel.name}</p>
+                  </div>
+                  <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600">
+                    Backendsiz demo
+                  </span>
+                </div>
+                <div className="mt-4 h-64 overflow-hidden rounded-md border border-zinc-200 bg-white">
+                  <ModelViewer
+                    src={activeModel.modelUrl}
+                    alt={activeModel.name}
+                    className="h-full w-full bg-white"
+                  />
+                </div>
+                <p className="mt-3 text-sm leading-6 text-zinc-600">
+                  Bu demo model serverdagi static GLB fayldan ochiladi. QR ni skaner qilsangiz
+                  shu model browserda 3D/AR view sifatida chiqadi.
+                </p>
+              </div>
               <QrCard path={`/ar/${activeModel.id}`} label={`${activeTenant.qrLabel}: ${activeModel.name}`} />
               <Link
                 href={`/ar/${activeModel.id}`}
