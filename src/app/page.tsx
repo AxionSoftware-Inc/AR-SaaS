@@ -226,7 +226,14 @@ export default function Home() {
                   shu model browserda 3D/AR view sifatida chiqadi.
                 </p>
               </div>
-              <QrCard path={`/ar/${activeModel.id}?native=1`} label={`${activeTenant.qrLabel}: ${activeModel.name}`} />
+              <QrCard
+                path={`/ar/${activeModel.id}?native=1`}
+                label={`${activeTenant.qrLabel}: ${activeModel.name}`}
+                nativeAndroid={{
+                  modelUrl: activeModel.modelUrl,
+                  title: activeModel.name,
+                }}
+              />
               <Link
                 href={`/ar/${activeModel.id}?native=1`}
                 className="flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white text-sm font-semibold hover:bg-zinc-50"
