@@ -35,9 +35,11 @@ function toViewModel(model: ArModel | ApiModel): ViewModel {
 export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
   const searchParams = useSearchParams();
   const qrCode = searchParams.get("qr");
+  const shouldAutoOpenNative = searchParams.get("native") === "1";
   const [apiModel, setApiModel] = useState<ApiModel | null>(null);
   const [isLoading, setIsLoading] = useState(!initialModel);
   const [origin] = useState(() => (typeof window === "undefined" ? "" : window.location.origin));
+  const [launchState, setLaunchState] = useState<"idle" | "opening" | "blocked">("idle");
 
   useEffect(() => {
     let ignore = false;
@@ -74,9 +76,43 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
           modelUrl: absoluteModelUrl,
           pageUrl: typeof window === "undefined" ? origin : window.location.href,
           title: model.name,
+          mode: "ar_only",
         })
       : "";
   const isHttps = origin.startsWith("https://");
+
+  useEffect(() => {
+    if (!shouldAutoOpenNative || !androidArUrl || !isHttps || typeof window === "undefined") {
+      return;
+    }
+
+    const isAndroid = /Android/i.test(window.navigator.userAgent);
+    if (!isAndroid) {
+      return;
+    }
+
+    const launchKey = `ar-native-launched:${modelId}`;
+    if (window.sessionStorage.getItem(launchKey) === "1") {
+      return;
+    }
+
+    window.sessionStorage.setItem(launchKey, "1");
+    const stateTimer = window.setTimeout(() => {
+      setLaunchState("opening");
+    }, 0);
+    const openTimer = window.setTimeout(() => {
+      window.location.href = androidArUrl;
+    }, 350);
+    const blockedTimer = window.setTimeout(() => {
+      setLaunchState("blocked");
+    }, 2500);
+
+    return () => {
+      window.clearTimeout(stateTimer);
+      window.clearTimeout(openTimer);
+      window.clearTimeout(blockedTimer);
+    };
+  }, [androidArUrl, isHttps, modelId, shouldAutoOpenNative]);
 
   if (isLoading) {
     return (
@@ -146,6 +182,13 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
                 <Camera className="size-5 text-emerald-300" />
                 <p className="font-semibold">Android native AR</p>
               </div>
+              {launchState !== "idle" ? (
+                <div className="mt-4 rounded-md border border-emerald-300/30 bg-zinc-950/30 p-3 text-sm leading-6 text-emerald-50">
+                  {launchState === "opening"
+                    ? "QR orqali native AR ochilmoqda. Agar kamera chiqmasa, pastdagi tugmani bosing."
+                    : "Browser avtomatik ochishni bloklagan bo'lishi mumkin. Pastdagi tugma bilan qayta oching."}
+                </div>
+              ) : null}
               <a
                 href={androidArUrl || "#"}
                 className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-300 px-4 text-sm font-semibold text-zinc-950 hover:bg-emerald-200"
