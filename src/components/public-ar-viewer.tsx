@@ -2,8 +2,9 @@
 
 import { ModelViewer } from "@/components/model-viewer";
 import { fetchPublicModel, sendScanEvent, type ApiModel } from "@/lib/api";
+import { absoluteUrl, androidSceneViewerUrl } from "@/lib/ar-links";
 import type { ArModel } from "@/lib/demo-data";
-import { ArrowLeft, Camera, Heart, MessageCircle, Move3D, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Box, Camera, Heart, MessageCircle, Move3D, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -36,6 +37,7 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
   const qrCode = searchParams.get("qr");
   const [apiModel, setApiModel] = useState<ApiModel | null>(null);
   const [isLoading, setIsLoading] = useState(!initialModel);
+  const [origin] = useState(() => (typeof window === "undefined" ? "" : window.location.origin));
 
   useEffect(() => {
     let ignore = false;
@@ -64,6 +66,17 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
     if (apiModel) return toViewModel(apiModel);
     return null;
   }, [apiModel, initialModel]);
+
+  const absoluteModelUrl = model && origin ? absoluteUrl(model.modelUrl, origin) : "";
+  const androidArUrl =
+    model && origin
+      ? androidSceneViewerUrl({
+          modelUrl: absoluteModelUrl,
+          pageUrl: typeof window === "undefined" ? origin : window.location.href,
+          title: model.name,
+        })
+      : "";
+  const isHttps = origin.startsWith("https://");
 
   if (isLoading) {
     return (
@@ -128,6 +141,25 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
               <p className="mt-3 text-sm leading-6 text-zinc-300">{model.material}</p>
             </div>
 
+            <div className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 p-5">
+              <div className="flex items-center gap-3">
+                <Camera className="size-5 text-emerald-300" />
+                <p className="font-semibold">Android native AR</p>
+              </div>
+              <a
+                href={androidArUrl || "#"}
+                className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-300 px-4 text-sm font-semibold text-zinc-950 hover:bg-emerald-200"
+              >
+                <Box className="size-4" />
+                Android AR&apos;da ochish
+              </a>
+              <p className="mt-3 text-sm leading-6 text-zinc-300">
+                {isHttps
+                  ? "Bu tugma Android Scene Viewer orqali kamerali AR rejimni ochadi."
+                  : "Native AR uchun sahifa HTTPS orqali ochilishi kerak. HTTP faqat 3D preview beradi."}
+              </p>
+            </div>
+
             <div className="grid grid-cols-3 gap-2">
               {[
                 [Heart, "Save"],
@@ -144,14 +176,14 @@ export function PublicArViewer({ modelId, initialModel }: PublicArViewerProps) {
               ))}
             </div>
 
-            <div className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 p-5">
+            <div className="rounded-lg border border-white/10 bg-white/10 p-5">
               <div className="flex items-center gap-3">
                 <Camera className="size-5 text-emerald-300" />
-                <p className="font-semibold">Telefon AR oqimi</p>
+                <p className="font-semibold">Eslatma</p>
               </div>
               <p className="mt-3 text-sm leading-6 text-zinc-300">
-                HTTPS va mos telefon brauzerida AR tugmasi kamerani ochib, modelni oldingizdagi
-                joyga qo&apos;yishga harakat qiladi.
+                Oq fondagi 3D viewer browser preview. Androidda haqiqiy kamera AR uchun yuqoridagi
+                native AR tugmasidan foydalaning.
               </p>
             </div>
           </aside>
